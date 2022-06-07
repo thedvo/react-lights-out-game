@@ -1,5 +1,5 @@
-import React from "react";
-import "./Cell.css";
+import React from 'react';
+import './Cell.css';
 
 /** A single cell on the board.
  *
@@ -14,9 +14,14 @@ import "./Cell.css";
  *
  **/
 
+// inherits flipCellsAroundMe function from parent component --> Board
+// isLit is determined based on the value of selected coordinate (TRUE/FALSE)
 function Cell({ flipCellsAroundMe, isLit }) {
-  const classes = `Cell ${isLit ? "Cell-lit" : ""}`;
-  return <td className={classes} onClick={flipCellsAroundMe} />;
+	// ternary operator. Used to determine className for selected cell.
+	const classes = `Cell ${isLit ? 'Cell-lit' : ''}`;
+
+	// returns table data cell with className determined above. Runs onClick function
+	return <td className={classes} onClick={flipCellsAroundMe} />;
 }
 
 export default Cell;

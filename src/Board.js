@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import Cell from "./Cell";
-import "./Board.css";
+import React, { useState } from 'react';
+import Cell from './Cell';
+import './Board.css';
 
 /** Game board of Lights out.
  *
@@ -26,48 +26,104 @@ import "./Board.css";
  *  This doesn't handle any clicks --- clicks are on individual cells
  *
  **/
+// set default values for the props in case.
+function Board({ nrows = 5, ncols = 5, chanceLightStartsOn = 0.25 }) {
+	const [board, setBoard] = useState(createBoard());
 
-function Board({ nrows, ncols, chanceLightStartsOn }) {
-  const [board, setBoard] = useState(createBoard());
+	/** create a board nrows high/ncols wide, each cell randomly lit or unlit */
+	function createBoard() {
+		let initialBoard = [];
 
-  /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
-  function createBoard() {
-    let initialBoard = [];
-    // TODO: create array-of-arrays of true/false values
-    return initialBoard;
-  }
+		// take the number of rows from the props, loop to create the rows
+		for (let y = 0; y < nrows; y++) {
+			let row = [];
+			// for each row, push the number of columns
+			// We will add TRUE/FALSE as values of the cells meaning if the light is ON/OFF
+			// if value returned from Math.random is less than props.chanceLightStartsOn, set the cell to True, otherwise set to False.
+			for (let x = 0; x < ncols; x++) {
+				row.push(Math.random() < chanceLightStartsOn);
+			}
+			initialBoard.push(row);
+		}
+		// TODO: create array-of-arrays of true/false values
+		return initialBoard;
+	}
 
-  function hasWon() {
-    // TODO: check the board in state to determine whether the player has won.
-  }
+	function hasWon() {
+		// TODO: check the board in state to determine whether the player has won.
+		// use every() method to check every row in the board.
+		// If every cell in all rows is set to FALSE, that means all lights are off.
+		return board.every((row) => row.every((cell) => !cell));
+	}
 
-  function flipCellsAround(coord) {
-    setBoard(oldBoard => {
-      const [y, x] = coord.split("-").map(Number);
+	function flipCellsAround(coord) {
+		setBoard((oldBoard) => {
+			// takes x & y coordinates and turns each of them into a number
+			const [y, x] = coord.split('-').map(Number);
 
-      const flipCell = (y, x, boardCopy) => {
-        // if this coord is actually on board, flip it
+			const flipCell = (y, x, boardCopy) => {
+				// if this coord is actually on board, flip it
 
-        if (x >= 0 && x < ncols && y >= 0 && y < nrows) {
-          boardCopy[y][x] = !boardCopy[y][x];
-        }
-      };
+				if (x >= 0 && x < ncols && y >= 0 && y < nrows) {
+					boardCopy[y][x] = !boardCopy[y][x];
+				}
+			};
 
-      // TODO: Make a (deep) copy of the oldBoard
+			// TODO: Make a (deep) copy of the oldBoard
+			const boardCopy = oldBoard.map((row) => [...row]);
 
-      // TODO: in the copy, flip this cell and the cells around it
+			// You can click on a cell to toggle that light — but it also toggles the light above it, to the left of it, to the right of it, and below it. (Cells on an edge or in the corner won’t flip as many lights, since they are missing some neighbors).
 
-      // TODO: return the copy
-    });
-  }
+			// TODO: in the copy, flip this cell and the cells around it
+			flipCell(y, x, boardCopy); // fliprs selected cell
+			flipCell(y, x + 1, boardCopy); // flips right cell
+			flipCell(y, x - 1, boardCopy); // flips left cell
+			flipCell(y + 1, x - 1, boardCopy); // flips above cell
+			flipCell(y - 1, x - 1, boardCopy); // flips below cell
 
-  // if the game is won, just show a winning msg & render nothing else
+			// TODO: return the copy
+			return boardCopy;
+		});
+	}
 
-  // TODO
+	// if the game is won, just show a winning msg & render nothing else
+	if (hasWon()) {
+		return alert("Lights Out! You've won the game.");
+	}
+	// TODO
 
-  // make table board
+	// make table board
+	let tableBoard = [];
 
-  // TODO
+	for (let y = 0; y < nrows; y++) {
+		let row = [];
+		for (let x = 0; x < ncols; x++) {
+			// create a coordinate variable to keep track of each cell
+			let coord = `${y}-${x}`;
+			// in each row, push an instane of the Cell component
+			// pass in a key, isLit, and flipCellsAround function.
+			row.push(
+				<Cell
+					key={coord} // give cell a key for useState and REACT to keep track
+					isLit={board[y][x]} // takes the value of the coordinate (TRUE/FALSE) to determine isLit
+					flipCellsAroundMe={() => flipCellsAround(coord)} // pass function for child component to have access as the Cell component will be the one which handles the onClick event
+				/>
+			);
+		}
+		// once the component is created, push it to the tableBoard initialized above.
+		// we use the y coordinate as the key for the row
+		// use table row tags for the row
+		tableBoard.push(<tr key={y}>{row}</tr>);
+	}
+
+	// return a table with the tableBoard as its contents
+	// place the contents (trows) in a table body tag
+	return (
+		<table>
+			<tbody>{tableBoard}</tbody>
+		</table>
+	);
+	// TODO
 }
 
 export default Board;
