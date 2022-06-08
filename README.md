@@ -25,3 +25,11 @@ When the game is won, the board should not be shown, but a simple “You Won” 
 
 A small amount of code is provided, but there are lots of places where you’ll need to write code to get the game functional.
 
+
+## **How to Run**
+
+```bash
+$ git clone https://github.com/thedvo/react-lights-out-game.git
+$ npm install
+$ npm start
+```
