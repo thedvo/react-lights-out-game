@@ -1,3 +1,24 @@
 .Board {
-  margin: 0 auto;
+	text-align: center;
+	margin: 0 auto;
+	width: 600px;
+}
+
+.Board-title {
+	font-size: 50px;
+	margin-bottom: 25px;
+}
+
+.Board-rules {
+	width: 500px;
+	justify-content: center;
+	align-items: center;
+	margin: 0 auto;
+}
+
+.Board-gameboard {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 50px;
 }
